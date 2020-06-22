@@ -17,8 +17,7 @@ services:
     ports:
       - 9031:9031
       - 9999:9999
-
-services:
+      
   pingaccess:
     image: pingidentity/pingaccess:latest
     env_file:
