@@ -17,7 +17,7 @@ services:
     ports:
       - 9031:9031
       - 9999:9999
-      
+
   pingaccess:
     image: pingidentity/pingaccess:latest
     env_file:
@@ -33,7 +33,7 @@ services:
     ports:
       - 3000:3000
       - 9000:9000
-      - 3443:443
+      - 6443:443
 
   pingdirectory:
     image: pingidentity/pingdirectory:latest
