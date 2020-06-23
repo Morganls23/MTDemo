@@ -20,6 +20,16 @@
 			"key": "pingCentralHost",
 			"value": "https://mt.ping-eng.com",
 			"enabled": true
+		},
+		{
+			"key": "delegatorHost",
+			"value": "mt.ping-eng.com",
+			"enabled": true
+		},
+		{
+			"key": "paVirtualHost",
+			"value": "mt.ping-eng.com",
+			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",
