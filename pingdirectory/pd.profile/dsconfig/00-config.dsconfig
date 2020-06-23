@@ -1,0 +1,414 @@
+# Configuration changes to bring source (config-postSetup.gz-aligned-to-8.0.0.1) to target (config.ldif)
+# Comparison options:
+#   Ignore differences in configuration that is part of the topology registry
+#   Ignore differences on shared host
+#   Ignore differences by instance
+
+dsconfig create-scim-resource-type \
+    --type-name MJTLabScim  \
+    --type ldap-pass-through  \
+    --set enabled:true  \
+    --set endpoint:mjtlab  \
+    --set schema-checking-option:allow-undefined-attributes  \
+    --set schema-checking-option:allow-undefined-sub-attributes  \
+    --set structural-ldap-objectclass:person  \
+    --set include-base-dn:dc=mjtlab,dc=com
+
+dsconfig create-scim-resource-type \
+    --type-name ScimOrgPerson  \
+    --type ldap-pass-through  \
+    --set enabled:true  \
+    --set endpoint:orgperson  \
+    --set structural-ldap-objectclass:ubidPerson  \
+    --set include-base-dn:dc=mjtlab,dc=com
+
+dsconfig set-trust-manager-provider-prop \
+    --provider-name 'Blind Trust'  \
+    --set enabled:true
+
+dsconfig create-local-db-index \
+    --backend-name userRoot  \
+    --index-name pf-connected-identity  \
+    --set index-type:equality
+
+dsconfig create-external-server \
+    --server-name hopper  \
+    --type ldap  \
+    --set server-host-name:hopper.mjtlab.local  \
+    --set server-port:636  \
+    --set connection-security:ssl  \
+    --set authentication-method:none  \
+    --set key-manager-provider:Null  \
+    --set 'trust-manager-provider:Blind Trust'
+
+dsconfig create-external-server \
+    --server-name MJTLabPrimaryExt  \
+    --type http  \
+    --set base-url:https://mt.ping-eng.com:9031  \
+    --set 'trust-manager-provider:Blind Trust'
+
+dsconfig create-external-server \
+    --server-name PingFederateInstance  \
+    --type http  \
+    --set base-url:https://mt.ping-eng.com:9031  \
+    --set hostname-verification-method:allow-all  \
+    --set 'trust-manager-provider:Blind Trust'
+
+dsconfig create-external-server \
+    --server-name WheelerPF  \
+    --type http  \
+    --set base-url:https://wheeler.mjtlab.local:9031  \
+    --set hostname-verification-method:allow-all
+
+dsconfig set-access-control-handler-prop \
+    --add 'global-aci:(extop="1.3.6.1.4.1.30221.2.6.17 || 1.3.6.1.4.1.30221.2.6.62")(version 3.0;acl "Authenticated access to the multi-update and generate-password extended requests for the Delegated Admin API"; allow (read) userdn="ldap:///all";)'  \
+    --add 'global-aci:(targetcontrol="1.3.6.1.4.1.4203.1.10.2 || 1.3.6.1.4.1.30221.2.5.40")(version 3.0;acl "Authenticated access to the no-op and password validation details request controls for the Delegated Admin API"; allow (read) userdn="ldap:///all";)'
+
+dsconfig create-consent-definition \
+    --definition-name MJTLabUserAgreement  \
+    --set 'display-name:User Agreement'  \
+    --set parameter:usageAgreement
+
+dsconfig create-consent-definition-localization \
+    --definition-name MJTLabUserAgreement  \
+    --localization-name en-US  \
+    --set version:1.6  \
+    --set 'title-text:Site Agreement'  \
+    --set 'data-text:Data Usage Agreement'  \
+    --set 'purpose-text:As a recipient of NIH grant funds, Memorial Sloan Kettering Cancer Center(MSK) is required to comply with all applicable provisions set forth in the NIH Grants Policy Statement (Revised October 2017), including §8.2.3.1 Data Sharing Policy for NIH grants and cooperative agreements for budget periods beginning on or after October 1, 2017. Per NIH Grants Policy: Data sharing is essential for expedited translation of research results into knowledge, products, and procedures to improve human health. NIH endorses the sharing of final research data*to serve these and other important scientific goals and expects and supports the timely release and sharing of final research data from NIH-supported studies for use by other researchers. "Timely release and sharing" is defined as no later than the acceptance for publication of the main findings from the final data set. All investigator-initiated applications with direct costs of $500,000 or more (excluding consortium F&A costs) in any single year are expected to address data-sharing in their application. In some cases, FOAs may request data-sharing plans for applications that are less than $500,000 (excluding consortium F&A costs) in any single year.NIH recognizes that data sharing may be complicated or limited, in some cases, by organizational policies, local IRB rules, and local, State and Federal laws and regulations, including the HIPAA Privacy Rule(seePublic Policy Requirements and Objectives-Confidentiality of Patient Records: Health Insurance Portability and Accountability). The rights and privacy of individuals who participate in NIH-sponsored research must always be protected. Thus, data intended for broader use should be free of identifiers that would permit linkages to individual research participants and variables that could lead to deductive disclosure of the identity of individual subjects. When data-sharing is limited, applicants should explain such limitations in their data-sharing plans.Investigators must exercise great care to ensure that resources involving human cells or tissues do not identify original donors or subjects, directly or through identifiers such as codes linked to the donors or subjects.Organizations that believe they will be unable to meet these expectations should promptly contact the GMO to discuss the circumstances, obtain information that might enable them to share data, and reach an understanding in advance of an award.Meeting MSK’s Intellectual Property and Third-Party Obligations:This includes complying with MSK'"'"'s obligation under Bayh-Dole to report to federal funding agencies on inventions resulting from federal funds, as well as with third-party obligations resulting from extramural sponsored research agreements or material transfer agreements. In devising a data sharing plan, investigators must consider the need to'
+
+dsconfig create-delegated-admin-rights \
+    --rights-name idadminpwd  \
+    --set enabled:true  \
+    --set admin-user-dn:uid=deladminPWD,ou=people,dc=mjtlab,dc=com
+
+dsconfig create-delegated-admin-rights \
+    --rights-name superadmin  \
+    --set enabled:true  \
+    --set admin-user-dn:uid=deladmin,ou=People,dc=mjtlab,dc=com
+
+dsconfig create-rest-resource-type \
+    --type-name groups  \
+    --type group  \
+    --set enabled:true  \
+    --set resource-endpoint:groups  \
+    --set structural-ldap-objectclass:groupOfUniqueNames  \
+    --set search-base-dn:dc=mjtlab,dc=com  \
+    --set parent-dn:dc=mjtlab,dc=com  \
+    --set display-name:Groups  \
+    --set search-filter-pattern:(cn=*%%*)  \
+    --set primary-display-attribute-type:cn
+
+dsconfig create-delegated-admin-resource-rights \
+    --rights-name superadmin  \
+    --rest-resource-type groups  \
+    --set enabled:true  \
+    --set admin-permission:create  \
+    --set admin-permission:delete  \
+    --set admin-permission:manage-group-membership  \
+    --set admin-permission:read  \
+    --set admin-permission:update
+
+dsconfig create-delegated-admin-attribute \
+    --type-name groups  \
+    --attribute-type cn  \
+    --set display-name:Group
+
+dsconfig create-delegated-admin-attribute \
+    --type-name groups  \
+    --attribute-type description  \
+    --set display-name:Description
+
+dsconfig create-rest-resource-type \
+    --type-name users  \
+    --type user  \
+    --set enabled:true  \
+    --set resource-endpoint:users  \
+    --set structural-ldap-objectclass:inetOrgPerson  \
+    --set search-base-dn:dc=mjtlab,dc=com  \
+    --set parent-dn:ou=people,dc=mjtlab,dc=com  \
+    --set display-name:Users  \
+    --set search-filter-pattern:(|(cn=*%%*)(mail=%%*)(uid=%%*)(sn=*%%*))  \
+    --set primary-display-attribute-type:cn
+
+dsconfig create-delegated-admin-resource-rights \
+    --rights-name idadminpwd  \
+    --rest-resource-type users  \
+    --set enabled:true  \
+    --set admin-permission:read  \
+    --set admin-permission:update  \
+    --set admin-scope:all-resources-in-base
+
+dsconfig create-delegated-admin-resource-rights \
+    --rights-name superadmin  \
+    --rest-resource-type users  \
+    --set enabled:true  \
+    --set admin-permission:create  \
+    --set admin-permission:delete  \
+    --set admin-permission:manage-group-membership  \
+    --set admin-permission:read  \
+    --set admin-permission:update  \
+    --set admin-scope:all-resources-in-base
+
+dsconfig create-delegated-admin-attribute \
+    --type-name users  \
+    --attribute-type cn  \
+    --set 'display-name:Full Name'
+
+dsconfig create-delegated-admin-attribute \
+    --type-name users  \
+    --attribute-type ds-pwp-account-disabled  \
+    --set 'display-name:Account Disabled'
+
+dsconfig create-delegated-admin-attribute \
+    --type-name users  \
+    --attribute-type givenName  \
+    --set 'display-name:First Name'  \
+    --set display-order-index:1
+
+dsconfig create-delegated-admin-attribute \
+    --type-name users  \
+    --attribute-type mail  \
+    --set display-name:Email  \
+    --set display-order-index:3
+
+dsconfig create-delegated-admin-attribute \
+    --type-name users  \
+    --attribute-type sn  \
+    --set 'display-name:Last Name'  \
+    --set display-order-index:2
+
+dsconfig create-delegated-admin-attribute \
+    --type-name users  \
+    --attribute-type uid  \
+    --set 'display-name:User ID'  \
+    --set display-order-index:4
+
+dsconfig create-trusted-certificate \
+    --certificate-name MJTLabExtHTTPSPubKey  \
+    --set 'certificate:-----BEGIN CERTIFICATE-----\n\
+MIIGiDCCBXCgAwIBAgIQB8jrU5/gRVGb0FxDfhjtOzANBgkqhkiG9w0BAQsFADBgMQswCQYDVQQG\n\
+EwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMR8w\n\
+HQYDVQQDExZHZW9UcnVzdCBUTFMgUlNBIENBIEcxMB4XDTE5MDQwNDAwMDAwMFoXDTIxMDQxODEy\n\
+MDAwMFowbjELMAkGA1UEBhMCVVMxETAPBgNVBAgTCENvbG9yYWRvMQ8wDQYDVQQHEwZEZW52ZXIx\n\
+IjAgBgNVBAoTGVBpbmcgSWRlbnRpdHkgQ29ycG9yYXRpb24xFzAVBgNVBAMMDioucGluZy1lbmcu\n\
+Y29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoLtpMjPBXVSQCAsnZFE8vznc7OxS\n\
+enb287MQMxMrtwfQ9SNb6YUZHFZgJa6IrpJyu5YziL96faQAPGWofCJAHNGKT6pVcSxTlZ+ZtFJd\n\
+nSyYgFL+Q0WyPFh7POAKW3cD9qswQMKYtYud82/Ubn4+Hvn0N63jHaGxogCthEKicjxg4gY/svwg\n\
+K7pcZULOMxvMbznqd+XV/f+t3M4d01RqMQPuQZBIYIQx4Gf8x/DYa17CfTdFGn9v18TzaI6TcuFX\n\
+Z3VuR1yJr8JxFxHWFtb4332SxJm+vnQbjG46YRkfH4OZJTB3xYB20fHf6myG4fcpqcYhiESpSDHS\n\
+dnxA0ZyjqQIDAQABo4IDLjCCAyowHwYDVR0jBBgwFoAUlE/UXYvkpOKmgP792PkA76O+AlcwHQYD\n\
+VR0OBBYEFHAW1qxp2chVtVrs9C23utXz7ldcMCcGA1UdEQQgMB6CDioucGluZy1lbmcuY29tggxw\n\
+aW5nLWVuZy5jb20wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcD\n\
+AjA/BgNVHR8EODA2MDSgMqAwhi5odHRwOi8vY2RwLmdlb3RydXN0LmNvbS9HZW9UcnVzdFRMU1JT\n\
+QUNBRzEuY3JsMEwGA1UdIARFMEMwNwYJYIZIAYb9bAEBMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8v\n\
+d3d3LmRpZ2ljZXJ0LmNvbS9DUFMwCAYGZ4EMAQICMHYGCCsGAQUFBwEBBGowaDAmBggrBgEFBQcw\n\
+AYYaaHR0cDovL3N0YXR1cy5nZW90cnVzdC5jb20wPgYIKwYBBQUHMAKGMmh0dHA6Ly9jYWNlcnRz\n\
+Lmdlb3RydXN0LmNvbS9HZW9UcnVzdFRMU1JTQUNBRzEuY3J0MAkGA1UdEwQCMAAwggF8BgorBgEE\n\
+AdZ5AgQCBIIBbASCAWgBZgB2AO5Lvbd1zmC64UJpH6vhnmajD35fsHLYgwDEe4l6qP3LAAABaejz\n\
+JzcAAAQDAEcwRQIhAIs6pb/9zf3XYL62Sh36cxdGVwI9qYhb/s92FzrTDPkGAiACPt34ta4nI9gB\n\
+YkR1RamESASitI/xsaH7yKV6K7z7UQB1AESUZS6w7s6vxEAH2Kj+KMDa5oK+2MsxtT/TM5a1toGo\n\
+AAABaejzJtcAAAQDAEYwRAIgciyRFomy5wmku2IsXS98bQV2Ca1LI2pm1v1mzUpHV18CID8SioqY\n\
+ilybsGgy1rLInHg0UQRBshWfOl9yOHHUcdzrAHUAVhQGmi/XwuzT9eG9RLI+x0Z2ubyZEVzA75SY\n\
+VdaJ0N0AAAFp6PMn8QAABAMARjBEAiB4K36cwxYnJZUZO0h95d+zQEiuxhjfN1H/abJb1EgqHQIg\n\
+Qlj7KjErUvIQmYuVEQpSS1a12sHYkDxrqR166ER8Q/owDQYJKoZIhvcNAQELBQADggEBACln8s2Q\n\
+Svv77zZswVZPExP9RNSmW5ZrNha4qqxRaqaMlkGSIymax9YF0unfvvX4mGZblgV+WMoKrCHNoxxd\n\
+6mSK1u1Qw1wTk5OHtcljwPl5lEgDVQwGQfg9WUB6kacJUevyvNOMWPHC+GCsrJFMVCd0nBiPasp/\n\
+bnR+zjNBqOKsL5y53NiHn6SuXEFdxdXjzTTcfTphM5YVrL9//6zanOeEaqsgHlREc0qPnhKSyMj2\n\
+ikT2QwPqLAt4vUuBKfo1471N6D1y4sWiSb+RopAgXwuhE3OJOwsfICt11FTG7hog4bkYTcuFqldk\n\
+X4DuVAGTHR42LQgzkF7RX39QTkZRMAs=\n\
+-----END CERTIFICATE-----'
+
+dsconfig create-request-criteria \
+    --criteria-name ad_to_pdir  \
+    --type simple  \
+    --set operation-type:bind  \
+    --set included-target-entry-dn:ou=People,dc=mjtlab,dc=com
+
+dsconfig create-request-criteria \
+    --criteria-name 'Delegated Admin User Creation Request Criteria'  \
+    --type simple  \
+    --set operation-type:add  \
+    --set included-target-entry-dn:ou=people,dc=mjtlab,dc=com  \
+    --set any-included-target-entry-filter:(objectClass=inetOrgPerson)  \
+    --set 'included-application-name:PingDirectory Delegated Admin'
+
+dsconfig create-dn-map \
+    --map-name pd_to_ad_dnmap  \
+    --set from-dn-pattern:*,ou=People,dc=mjtlab,dc=com  \
+    --set to-dn-pattern:cn={cn:trim},cn=Users,dc=mjtlab,dc=local
+
+dsconfig set-http-servlet-extension-prop \
+    --extension-name 'Delegated Admin'  \
+    --set access-token-scope:urn:pingidentity:directory-delegated-admin
+
+dsconfig create-root-dn-user \
+    --user-name mtraub  \
+    --set password:{PBKDF2}AAgpxB+baWdirRAAhWlCww7dYchBm2hm0ODYYJH8vhYXQPG8pZRK1C37kDg=  \
+    --set user-id:mtraub  \
+    --set email-address:mtraub@mjtlab:  \
+    --set privilege:-audit-data-security  \
+    --set privilege:-backend-backup  \
+    --set privilege:-backend-restore  \
+    --set privilege:-bypass-acl  \
+    --set privilege:-bypass-pw-policy  \
+    --set privilege:-bypass-read-acl  \
+    --set privilege:-config-read  \
+    --set privilege:-config-write  \
+    --set privilege:-disconnect-client  \
+    --set privilege:-exec-task  \
+    --set privilege:-jmx-notify  \
+    --set privilege:-jmx-read  \
+    --set privilege:-jmx-write  \
+    --set privilege:-ldif-export  \
+    --set privilege:-ldif-import  \
+    --set privilege:-lockdown-mode  \
+    --set privilege:-manage-topology  \
+    --set privilege:-metrics-read  \
+    --set privilege:-modify-acl  \
+    --set privilege:-password-reset  \
+    --set privilege:-permit-externally-processed-authentication  \
+    --set privilege:-permit-forwarding-client-connection-policy  \
+    --set privilege:-permit-get-password-policy-state-issues  \
+    --set privilege:-permit-proxied-mschapv2-details  \
+    --set privilege:-privilege-change  \
+    --set privilege:-proxied-auth  \
+    --set privilege:-server-restart  \
+    --set privilege:-server-shutdown  \
+    --set privilege:-soft-delete-read  \
+    --set privilege:-stream-values  \
+    --set privilege:-third-party-task  \
+    --set privilege:-unindexed-search  \
+    --set privilege:-unindexed-search-with-control  \
+    --set privilege:-update-schema  \
+    --set privilege:-use-admin-session  \
+    --set privilege:audit-data-security  \
+    --set privilege:backend-backup  \
+    --set privilege:backend-restore  \
+    --set privilege:bypass-acl  \
+    --set privilege:bypass-pw-policy  \
+    --set privilege:bypass-read-acl  \
+    --set privilege:config-read  \
+    --set privilege:config-write  \
+    --set privilege:disconnect-client  \
+    --set privilege:exec-task  \
+    --set privilege:jmx-notify  \
+    --set privilege:jmx-read  \
+    --set privilege:jmx-write  \
+    --set privilege:ldif-export  \
+    --set privilege:ldif-import  \
+    --set privilege:lockdown-mode  \
+    --set privilege:manage-topology  \
+    --set privilege:metrics-read  \
+    --set privilege:modify-acl  \
+    --set privilege:password-reset  \
+    --set privilege:permit-externally-processed-authentication  \
+    --set privilege:permit-forwarding-client-connection-policy  \
+    --set privilege:permit-get-password-policy-state-issues  \
+    --set privilege:permit-proxied-mschapv2-details  \
+    --set privilege:privilege-change  \
+    --set privilege:proxied-auth  \
+    --set privilege:server-restart  \
+    --set privilege:server-shutdown  \
+    --set privilege:soft-delete-read  \
+    --set privilege:stream-values  \
+    --set privilege:third-party-task  \
+    --set privilege:unindexed-search  \
+    --set privilege:unindexed-search-with-control  \
+    --set privilege:update-schema  \
+    --set privilege:use-admin-session  \
+    --set 'password-policy:Default Password Policy'
+
+dsconfig create-root-dn-user \
+    --user-name pfederation  \
+    --set alternate-bind-dn:cn=pfederation  \
+    --set password:{SSHA256}OCozvSXtXKRLt45s4uCTzV9Wl5in8HSoz6uENTVLbnWcsSlK+tEKfw==  \
+    --set privilege:password-reset  \
+    --set privilege:proxied-auth  \
+    --set 'password-policy:Default Password Policy'
+
+dsconfig set-root-dn-user-prop \
+    --user-name 'SCIM2 Servlet'  \
+    --reset privilege
+
+dsconfig set-virtual-attribute-prop \
+    --name 'Delegated Admin Privilege'  \
+    --set enabled:true
+
+dsconfig create-web-application-extension \
+    --extension-name Delegator  \
+    --set base-context-path:/delegator  \
+    --set document-root-directory:webapps/delegator/app
+
+dsconfig set-connection-handler-prop \
+    --handler-name 'HTTPS Connection Handler'  \
+    --add 'http-servlet-extension:Delegated Admin'  \
+    --add web-application-extension:Delegator
+
+dsconfig create-account-status-notification-handler \
+    --handler-name 'Delegated Admin Email Account Status Notification Handler'  \
+    --type multi-part-email  \
+    --set enabled:false  \
+    --set 'account-creation-notification-request-criteria:Delegated Admin User Creation Request Criteria'  \
+    --set account-created-message-template:config/account-status-notification-email-templates/delegated-admin-account-created.template
+
+dsconfig create-identity-mapper \
+    --mapper-name BasicAuthMapper  \
+    --type exact-match  \
+    --set enabled:true  \
+    --set match-base-dn:ou=people,dc=mjtlab,dc=com
+
+dsconfig create-identity-mapper \
+    --mapper-name entryUUIDMatch  \
+    --type exact-match  \
+    --set enabled:true  \
+    --set match-attribute:entryUUID  \
+    --set match-base-dn:dc=mjtlab,dc=com
+
+dsconfig create-access-token-validator \
+    --validator-name PingFederateValidator  \
+    --type ping-federate  \
+    --set identity-mapper:entryUUIDMatch  \
+    --set enabled:true  \
+    --set authorization-server:PingFederateInstance  \
+    --set client-id:pingdirectory  \
+    --set client-secret:AAC1hqOAm3F3JH6cAaS1aYTY4EUbDYSI3QE=
+
+dsconfig create-identity-mapper \
+    --mapper-name UIDMapper  \
+    --type exact-match  \
+    --set enabled:true
+
+dsconfig create-access-token-validator \
+    --validator-name MJTLabExtPrimaryValidator  \
+    --type ping-federate  \
+    --set identity-mapper:UIDMapper  \
+    --set enabled:true  \
+    --set authorization-server:MJTLabPrimaryExt  \
+    --set client-id:pd_wheeler  \
+    --set client-secret:AAA9dEjwr3JiL+VTUVH8b6Ot5/LHrLR7NO8=  \
+    --set access-token-manager-id:PingDirectoryATM
+
+dsconfig set-consent-service-prop \
+    --set enabled:true  \
+    --set base-dn:ou=consents,dc=mjtlab,dc=com  \
+    --set bind-dn:cn=pfederation  \
+    --set consent-record-identity-mapper:UIDMapper  \
+    --set service-account-dn:cn=pfederation  \
+    --set unprivileged-consent-scope:unprivconsent  \
+    --set privileged-consent-scope:privconsent
+
+dsconfig set-http-servlet-extension-prop \
+    --extension-name 'Directory REST API'  \
+    --set access-token-validator:MJTLabExtPrimaryValidator  \
+    --set access-token-scope:user
+
+dsconfig create-plugin \
+    --plugin-name pdir_to_ad_pass_through  \
+    --type pass-through-authentication  \
+    --set enabled:true  \
+    --set server:hopper  \
+    --set override-local-password:true  \
+    --set update-local-password:true  \
+    --set request-criteria:ad_to_pdir  \
+    --set dn-map:pd_to_ad_dnmap
