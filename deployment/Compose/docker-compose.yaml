@@ -39,6 +39,7 @@ services:
     image: pingidentity/pingdirectory:latest
     env_file:
       - ./env-vars
+      - ~/.pingidentity/devops
     secrets:
       - devops-secret
     environment:
@@ -85,7 +86,7 @@ services:
     ports:
       - 8443:8443
 
-   pingdelegator:
+  pingdelegator:
     image: pricecs/pingdelegator:4.0
     env_file:
       - ./env_vars
