@@ -68,8 +68,6 @@ services:
       - SERVER_PROFILE_PATH=pingcentral/external-mysql-db
     env_file:
       - ./env-vars
-    secrets:
-      - devops-secret
     ports:
       - "9022:9022"
     depends_on:
