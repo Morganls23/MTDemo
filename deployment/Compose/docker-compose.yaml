@@ -41,11 +41,13 @@ services:
   pingconfig:
     image: pricecs/pingconfigurator
     environment:
+      #standard 360
+      - COLLECTIONS=https://www.getpostman.com/collections/344bbc13f4ccd4ebc5f5
       # Collections: Solution - Customer360 --> User Case: Add PA Ingress Controller --> Use Case: Delegated Admin [ Simple | Advanced ]
       # Simple:
       # - COLLECTIONS=https://www.getpostman.com/collections/344bbc13f4ccd4ebc5f5,https://www.getpostman.com/collections/eaa397bd3a35ef3095c1,https://www.getpostman.com/collections/213af84dea3cbc210516
       # Advanced:
-      - COLLECTIONS=https://www.getpostman.com/collections/344bbc13f4ccd4ebc5f5,https://www.getpostman.com/collections/eaa397bd3a35ef3095c1,https://www.getpostman.com/collections/eb7dc32b6d429fd7bcd2
+      #- COLLECTIONS=https://www.getpostman.com/collections/344bbc13f4ccd4ebc5f5,https://www.getpostman.com/collections/eaa397bd3a35ef3095c1,https://www.getpostman.com/collections/eb7dc32b6d429fd7bcd2
     volumes:
       # An environment file should be injected into the image - this file should contain your specfic info and secrets
       - ./postman_vars.json:/usr/src/app/postman_vars.json
@@ -59,6 +61,29 @@ services:
      - 80:8080
      - 443:3000
      - 9000:9000
+
+  pingcentral:
+    image: pingidentity/pingcentral:latest
+    command: wait-for pingfederate:9031 -t 7200 -- entrypoint.sh start-server
+    environment:
+      - SERVER_PROFILE_URL=https://github.com/Morganls23/MTDemo.git
+      - SERVER_PROFILE_PATH=pingcentral/external-mysql-db
+    env_file:
+      - ./env-vars
+    secrets:
+      - devops-secret
+    ports:
+      - "9022:9022"
+    depends_on:
+      - "pingcentral-db"
+
+  pingcentral-db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 2Federate
+    ports:
+      - "3306:3306"
 
   pingdelegator:
     image: pricecs/pingdelegator:4.0
