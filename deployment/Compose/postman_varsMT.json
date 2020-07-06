@@ -1,10 +1,10 @@
 {
 	"id": "40199d03-d15c-47e4-b502-8b62f98479d1",
-	"name": "Use Case: Delegated Admin",
+	"name": "Solution-Customer360-Advanced",
 	"values": [
 		{
 			"key": "pfBaseURL",
-			"value": "https://mt.ping-eng.com",
+			"value": " https://mt.ping-eng.com",
 			"enabled": true
 		},
 		{
@@ -20,14 +20,9 @@
 			"key": "delegatorHost",
 			"value": "https://mt.ping-eng.com",
 			"enabled": true
-		},
+},
 		{
 			"key": "pingCentralHost",
-			"value": "https://mt.ping-eng.com",
-			"enabled": true
-		},
-		{
-			"key": "paVirtualHost",
 			"value": "https://mt.ping-eng.com",
 			"enabled": true
 		}
