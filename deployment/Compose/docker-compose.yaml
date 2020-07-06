@@ -21,7 +21,6 @@ services:
   pingaccess:
     image: pingidentity/pingaccess:latest
     env_file:
-     - ~/.pingidentity/devops
      - ./env_vars
     ports:
      - 80:8080
