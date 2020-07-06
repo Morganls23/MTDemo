@@ -18,8 +18,6 @@ services:
     image: pingidentity/pingdirectory:latest
     env_file:
       - ./env-vars
-    secrets:
-      - devops-secret
     environment:
       # DelAdmin has some files that need to be layered in
       #- SERVER_PROFILE_URL=https://github.com/cprice-ping/Profile-DelAdmin.git
@@ -72,8 +70,6 @@ services:
       - SERVER_PROFILE_PATH=pingcentral/external-mysql-db
     env_file:
       - ./env-vars
-    secrets:
-      - devops-secret
     ports:
       - "9022:9022"
     depends_on:
