@@ -21,19 +21,12 @@ services:
   pingaccess:
     image: pingidentity/pingaccess:latest
     env_file:
-      - ./env-vars
-    secrets:
-      - devops-secret
-    environment:
-    - SERVER_PROFILE_URL=https://github.com/Morganls23/MTDemo.git
-    - SERVER_PROFILE_PATH=pingaccess
-    #volumes:
-    #  - ${HOME}/projects/devops/volumes/full-stack.pingfederate:/opt/out
-    #  - ${HOME}/projects/devops/pingidentity-server-profiles/baseline/pingfederate:/opt/in
+     - ~/.pingidentity/devops
+     - ./env_vars
     ports:
-      - 3000:3000
-      - 9000:9000
-      - 6443:443
+     - 80:8080
+     - 443:3000
+     - 9000:9000
 
   pingdirectory:
     image: pingidentity/pingdirectory:latest
@@ -92,6 +85,7 @@ services:
     environment:
       # Collections: Solution - Customer360
       # - COLLECTIONS=https://www.getpostman.com/collections/344bbc13f4ccd4ebc5f5
+      #adding deladmin advanced collection from Cprice
       - COLLECTIONS=https://www.getpostman.com/collections/344bbc13f4ccd4ebc5f5,https://www.getpostman.com/collections/eaa397bd3a35ef3095c1,https://www.getpostman.com/collections/eb7dc32b6d429fd7bcd2
 
     volumes:

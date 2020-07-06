@@ -4,7 +4,7 @@
 	"values": [
 		{
 			"key": "pfBaseURL",
-			"value": " https://mt.ping-eng.com:9031",
+			"value": " https://mt.ping-eng.com",
 			"enabled": true
 		},
 		{
@@ -16,6 +16,11 @@
 			"value": "74b5cc6f-576e-4b47-8bb7-4f7e8806f503",
 			"enabled": true
 		},
+		{
+			"key": "delegatorHost",
+			"value": "https://mt.ping-eng.com",
+			"enabled": true
+},
 		{
 			"key": "pingCentralHost",
 			"value": "https://mt.ping-eng.com",
