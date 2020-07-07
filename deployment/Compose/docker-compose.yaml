@@ -85,7 +85,7 @@ services:
     image: pingidentity/pingaccess:latest
     env_file:
      - ~/.pingidentity/devops
-     - ./env_vars
+     - ./env-vars
     ports:
      - 80:8080
      - 443:3000
