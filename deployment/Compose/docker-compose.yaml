@@ -60,7 +60,7 @@ services:
         hard: 65535
     ports:
       - 3636:636
-      - 3443:443
+      - 3443:444
 
   pingdataconsole:
     image: pingidentity/pingdataconsole:edge
