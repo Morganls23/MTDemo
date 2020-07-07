@@ -7,14 +7,14 @@ The API Collections used to configure the solution components contain a set of d
 
 | Deployment | Environment File | Description |
 | --- | --- | --- |
-| **Docker Compose** | `env_vars` | Used by the Container images |
+| **Docker Compose** | `env-vars` | Used by the Container images |
 | | `postman_vars` | Used by the API calls |
 | **Kubernetes** | `env-vars-configmap.yaml` | Used by the Container images |
 | | `pingconfig-cm0-configmap.yaml` | Used by the API calls |
 
 **Server Profile Environment**
 
-`env_vars` || `env-vars-configmap.yaml`
+`env-vars` || `env-vars-configmap.yaml`
 
 | Variable | Description | Customer Values |
 | -------- | ----------- | ------- |

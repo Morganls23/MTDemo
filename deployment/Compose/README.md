@@ -8,8 +8,8 @@
 ### Configuration
 
 **Modify Environment Variables**
-* Copy the `docker-compose.yaml`, `env_vars` and `postman_vars.json` files to a folder
-* Modify the `env_vars` file to match your environment
+* Copy the `docker-compose.yaml`, `env-vars` and `postman_vars.json` files to a folder
+* Modify the `env-vars` file to match your environment
 * Modify the `postman.json` file to match your environment
 
 **Deploy Services**
@@ -40,7 +40,7 @@ Variables defined in `postman_vars.json` to override the Collection defaults
 | `pingIdSdk` | PingID SDK Properties  | Your SDK Properties file |
 | `sdkAppId` | PID SDK Application ID | Your SDK App ID |
 
-**`env_vars`**
+**`env-vars`**
 | Variable | Description | Customer Values |
 | -------- | ----------- | ------- |
 | `PING_IDENTITY_ACCEPT_EULA` | Ping Identity EULA | YES |
