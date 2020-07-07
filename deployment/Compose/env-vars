@@ -48,4 +48,4 @@ PF_CLIENT_ID=Delegator
 
 
 # Base Hostname of the PingFed service being used for Delegated Admin
-PF_BASE_HOST=https://mt.ping-eng.com
+PF_BASE_HOST=mt.ping-eng.com
