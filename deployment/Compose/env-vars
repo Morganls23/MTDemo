@@ -25,6 +25,7 @@ PF_ISSUER=https://mt.ping-eng.com
 
 #PA Values
 PING_IDENTITY_PASSWORD=2FederateM0re
+paVirtualHost=mt.ping-eng.com
 
 
 # PD details for Delegator API calls
