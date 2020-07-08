@@ -28,7 +28,7 @@
 		},
 		{
 			"key": "paVirtualHost",
-			"value": "https://mt.ping-eng.com",
+			"value": "mt.ping-eng.com",
 			"enabled": true
 		}
 	],
