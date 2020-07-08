@@ -30,7 +30,7 @@ paVirtualHost=mt.ping-eng.com
 
 # PD details for Delegator API calls
 PD_HOST=https://mt.ping-eng.com
-#PD_PORT=443
+PD_PORT=443
 
 
 # BaseURL of the PingFed service - Used in the PD Email Notification
